@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.example.hotel.enums.RoomStatus;
+import com.example.hotel.enums.RoomType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,8 +28,9 @@ public class Room {
     @Column(name = "room_number", unique = true)
     private String roomNumber;
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "room_type")
-    private String roomType;
+    private RoomType roomType;  // Changed from String to RoomType enum
     
     @Column(name = "price_per_night")
     private BigDecimal pricePerNight;

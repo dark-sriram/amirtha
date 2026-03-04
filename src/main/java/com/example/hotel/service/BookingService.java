@@ -1,26 +1,31 @@
 package com.example.hotel.service;
 
-import com.example.hotel.dto.request.BookingRequest;
-import com.example.hotel.dto.response.BookingResponse;
-import com.example.hotel.entity.Booking;
-import com.example.hotel.entity.Room;
-import com.example.hotel.entity.User;
-import com.example.hotel.enums.BookingStatus;
-import com.example.hotel.repository.BookingRepository;
-import com.example.hotel.repository.RoomRepository;
-import com.example.hotel.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.hotel.dto.request.BookingRequest;
+import com.example.hotel.dto.response.BookingResponse;
+import com.example.hotel.entity.Booking;
+import com.example.hotel.entity.Room;
+import com.example.hotel.entity.User;
+import com.example.hotel.enums.BookingStatus;
+import com.example.hotel.enums.RoomStatus;
+import com.example.hotel.repository.BookingRepository;
+import com.example.hotel.repository.RoomRepository;
+import com.example.hotel.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class BookingService {
+
     private final BookingRepository bookingRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
@@ -32,18 +37,29 @@ public class BookingService {
     }
 
     // Step ③: Booking Creation
+    // Add this validation in createBooking method
     @Transactional
     public BookingResponse createBooking(BookingRequest request) {
+        // Validate dates: checkOut must be after checkIn
+        if (!request.isValidDates()) {
+            throw new IllegalStateException("checkOutDate must be after checkInDate");
+        }
+
         if (!isRoomAvailable(request.getRoomId(), request.getCheckIn(), request.getCheckOut())) {
             throw new IllegalStateException("Conflict Detected: Room unavailable for selected dates");
         }
 
         Room room = roomRepository.findById(request.getRoomId())
-            .orElseThrow(() -> new RuntimeException("Room not found"));
-        
+                .orElseThrow(() -> new RuntimeException("Room not found"));
+
+        // Validate room is AVAILABLE
+        if (room.getStatus() != RoomStatus.AVAILABLE) {
+            throw new IllegalStateException("Room must be AVAILABLE to book");
+        }
+
         User user = userRepository.findById(request.getUserId())
-            .orElseThrow(() -> new RuntimeException("User not found"));
-        
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         long nights = ChronoUnit.DAYS.between(request.getCheckIn(), request.getCheckOut());
         BigDecimal total = room.getPricePerNight().multiply(BigDecimal.valueOf(nights));
 
@@ -57,16 +73,16 @@ public class BookingService {
         booking.setCreatedAt(LocalDateTime.now());
 
         bookingRepository.save(booking);
-        
+
         return new BookingResponse(
-            booking.getId(),
-            user.getId(),
-            room.getId(),
-            booking.getCheckInDate(),
-            booking.getCheckOutDate(),
-            booking.getTotalAmount(),
-            booking.getStatus(),
-            booking.getCreatedAt()
+                booking.getId(),
+                user.getId(),
+                room.getId(),
+                booking.getCheckInDate(),
+                booking.getCheckOutDate(),
+                booking.getTotalAmount(),
+                booking.getStatus(),
+                booking.getCreatedAt()
         );
     }
 
@@ -74,10 +90,10 @@ public class BookingService {
     @Transactional
     public Booking updateBookingStatus(Long bookingId, BookingStatus newStatus) {
         Booking booking = bookingRepository.findById(bookingId)
-            .orElseThrow(() -> new RuntimeException("Booking not found"));
-        
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
         BookingStatus currentStatus = booking.getStatus();
-        
+
         if (!isValidTransition(currentStatus, newStatus)) {
             throw new IllegalStateException("Invalid Status Transition from " + currentStatus + " to " + newStatus);
         }
@@ -87,9 +103,15 @@ public class BookingService {
     }
 
     private boolean isValidTransition(BookingStatus current, BookingStatus next) {
-        if (current == BookingStatus.REQUESTED && (next == BookingStatus.CONFIRMED || next == BookingStatus.CANCELLED)) return true;
-        if (current == BookingStatus.CONFIRMED && (next == BookingStatus.CHECKED_IN || next == BookingStatus.CANCELLED)) return true;
-        if (current == BookingStatus.CHECKED_IN && next == BookingStatus.CHECKED_OUT) return true;
+        if (current == BookingStatus.REQUESTED && (next == BookingStatus.CONFIRMED || next == BookingStatus.CANCELLED)) {
+            return true;
+        }
+        if (current == BookingStatus.CONFIRMED && (next == BookingStatus.CHECKED_IN || next == BookingStatus.CANCELLED)) {
+            return true;
+        }
+        if (current == BookingStatus.CHECKED_IN && next == BookingStatus.CHECKED_OUT) {
+            return true;
+        }
         return false;
     }
 
@@ -99,7 +121,7 @@ public class BookingService {
 
     public Booking findBookingById(Long id) {
         return bookingRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
     }
 
     public List<Booking> findBookingsByUser(Long userId) {
