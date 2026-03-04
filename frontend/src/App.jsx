@@ -1,4 +1,18 @@
 import { useState } from 'react'
+<<<<<<< HEAD
+import './App.css'
+
+function App() {
+
+  return (
+    <div className="App">
+      <UserDashboard />
+    </div>
+  )
+}
+
+export default App
+=======
 import Feedback from './pages/Feedback'
 import Navbar from './components/Navbar'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -41,3 +55,4 @@ function App() {
 }
 
 export default App;
+>>>>>>> b722868a72f982f1853512ac4db398f5d395ba7f
