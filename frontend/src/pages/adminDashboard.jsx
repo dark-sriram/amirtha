@@ -29,8 +29,8 @@ const Dashboard = () => {
         roomAPI.getAll(),
       ]);
 
-      const bookings = bookingsRes.data;
-      const rooms = roomsRes.data;
+      const bookings = Array.isArray(bookingsRes.data) ? bookingsRes.data : [];
+      const rooms = Array.isArray(roomsRes.data) ? roomsRes.data : [];
 
       const occupancyRate = rooms.length > 0 ? Math.round(((rooms.length - rooms.filter(r => r.status === 'AVAILABLE').length) / rooms.length) * 100) : 0;
 
@@ -46,6 +46,15 @@ const Dashboard = () => {
       setRecentBookings(bookings.slice(-5).reverse());
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      setStats({
+        totalBookings: 0,
+        pendingRequests: 0,
+        confirmedBookings: 0,
+        totalRooms: 0,
+        availableRooms: 0,
+        occupancyRate: 0,
+      });
+      setRecentBookings([]);
     } finally {
       setLoading(false);
     }

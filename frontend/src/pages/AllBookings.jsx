@@ -16,9 +16,10 @@ const AllBookings = () => {
   const fetchBookings = async () => {
     try {
       const response = await bookingAPI.getAll();
-      setBookings(response.data);
+      setBookings(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching bookings:', error);
+      setBookings([]);
     } finally {
       setLoading(false);
     }

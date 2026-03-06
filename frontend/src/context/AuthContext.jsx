@@ -21,11 +21,9 @@ export const AuthProvider = ({ children }) => {
       const response = await authAPI.login({ email, password });
       const { token, email: userEmail } = response.data;
       
-      // Fetch user details to get role
+      // Fetch user details
       const userResponse = await fetch(`http://localhost:8080/api/users/email/${userEmail}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       
       if (userResponse.ok) {
@@ -42,6 +40,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (userData) => {
+    try {
+      const response = await authAPI.register(userData);
+      const { token, email } = response.data;
+      
+      const userResponse = await fetch(`http://localhost:8080/api/users/email/${email}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+        return { success: true, user: userData };
+      }
+      
+      return { success: false, error: 'Failed to fetch user data' };
+    } catch (error) {
+      return { success: false, error: error.response?.data?.message || 'Registration failed' };
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -52,8 +73,9 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     login,
+    register,
     logout,
-    isAdmin: user?.role === 'ADMIN',
+    isAuthenticated: !!user,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

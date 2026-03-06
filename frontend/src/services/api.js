@@ -24,27 +24,31 @@ export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
 };
 
-// Booking APIs
-export const bookingAPI = {
-  getAll: () => api.get('/bookings/all'),
-  getById: (id) => api.get(`/bookings/${id}`),
-  updateStatus: (id, status) => api.patch(`/bookings/${id}/status?status=${status}`),
-  getByUser: (userId) => api.get(`/bookings/user/${userId}`),
-};
-
 // Room APIs
 export const roomAPI = {
   getAll: () => api.get('/rooms'),
   getById: (id) => api.get(`/rooms/${id}`),
+  getAvailable: (checkIn, checkOut) =>
+    api.get(`/rooms/available?checkIn=${checkIn}&checkOut=${checkOut}`),
   create: (roomData) => api.post('/rooms', roomData),
   update: (id, roomData) => api.put(`/rooms/${id}`, roomData),
   delete: (id) => api.delete(`/rooms/${id}`),
   updateStatus: (id, status) => api.patch(`/rooms/${id}/status?status=${status}`),
 };
 
-// User APIs
-export const userAPI = {
-  getAll: () => api.get('/users'),
+// Booking APIs
+export const bookingAPI = {
+  create: (bookingData) => api.post('/bookings', bookingData),
+  getAll: () => api.get('/bookings/all'),
+  getById: (id) => api.get(`/bookings/${id}`),
+  getByUser: (userId) => api.get(`/bookings/user/${userId}`),
+  updateStatus: (id, status) => api.patch(`/bookings/${id}/status?status=${status}`),
+};
+
+// Payment APIs
+export const paymentAPI = {
+  create: (paymentData) => api.post('/payments', paymentData),
+  getByBooking: (bookingId) => api.get(`/payments/booking/${bookingId}`),
 };
 
 export default api;

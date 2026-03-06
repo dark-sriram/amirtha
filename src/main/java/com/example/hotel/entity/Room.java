@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.hotel.enums.RoomStatus;
 import com.example.hotel.enums.RoomType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,5 +42,6 @@ public class Room {
     private RoomStatus status;
     
     @OneToMany(mappedBy = "room")
+    @JsonIgnore
     private List<Booking> bookings;
 }

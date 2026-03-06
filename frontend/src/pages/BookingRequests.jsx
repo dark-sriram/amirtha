@@ -15,10 +15,12 @@ const BookingRequests = () => {
   const fetchRequests = async () => {
     try {
       const response = await bookingAPI.getAll();
-      const pendingRequests = response.data.filter(b => b.status === 'REQUESTED');
+      const data = Array.isArray(response.data) ? response.data : [];
+      const pendingRequests = data.filter(b => b.status === 'REQUESTED');
       setRequests(pendingRequests);
     } catch (error) {
       console.error('Error fetching requests:', error);
+      setRequests([]);
     } finally {
       setLoading(false);
     }
