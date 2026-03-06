@@ -1,78 +1,145 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FiCalendar, FiGrid, FiShield, FiCreditCard } from 'react-icons/fi';
+import Layout from '../components/Layout';
 
 const Home = () => {
-    return (
-        <div className="min-h-screen bg-white flex flex-col font-sans w-full">
-            {/* Top Navbar */}
-            <div className="bg-white flex justify-between items-center px-4 md:px-8 py-3 border-b border-[#3E362E]/10">
-                <div className="flex items-center gap-4">
-                    <h1 className="text-3xl font-bold tracking-widest text-[#3E362E]">AMIRTHA</h1>
-                </div>
+  const features = [
+    {
+      icon: FiGrid,
+      title: 'Browse Rooms',
+      description: 'View all available rooms with detailed information',
+      color: 'text-primary'
+    },
+    {
+      icon: FiCalendar,
+      title: 'Easy Booking',
+      description: 'Book rooms with simple date selection',
+      color: 'text-secondary'
+    },
+    {
+      icon: FiShield,
+      title: 'Secure System',
+      description: 'Your data is protected with JWT authentication',
+      color: 'text-success'
+    },
+    {
+      icon: FiCreditCard,
+      title: 'Multiple Payment',
+      description: 'Pay via CARD, CASH, or UPI',
+      color: 'text-accent'
+    }
+  ];
 
-                <div className="hidden md:flex items-center gap-6 text-xs font-bold tracking-widest text-[#3E362E]">
-                    <Link to="/redirect" className="cursor-pointer hover:text-[#865D36]">LOGIN</Link>
-                    <Link to="/redirect"
-                        className="bg-[#93785B] hover:bg-[#3E362E] text-white px-6 py-3 rounded-sm transition-colors text-center inline-block">
-                        CREATE AN ACCOUNT
-                    </Link>
-                </div>
+  return (
+    <Layout>
+      {/* Hero Section */}
+      <div className="hero min-h-[60vh] bg-base-300 mb-12 rounded-box">
+        <div className="hero-content text-center">
+          <div className="max-w-2xl">
+            <h1 className="text-5xl font-bold mb-6">
+              Welcome to <span className="text-primary">HotelMS</span>
+            </h1>
+            <p className="text-xl mb-8 text-base-content/80">
+              Experience seamless hotel booking with our modern management system. 
+              Browse rooms, make reservations, and manage your bookings all in one place.
+            </p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link to="/rooms" className="btn btn-primary btn-lg">
+                Browse Rooms
+              </Link>
+              <Link to="/register" className="btn btn-outline btn-lg">
+                Register Now
+              </Link>
             </div>
-
-            {/* Hero Section */}
-            <div className="hero-bg relative w-full h-[600px] flex flex-col items-center justify-center">
-                {/* Overlay for readability */}
-                <div className="absolute inset-0 bg-black/20"></div>
-
-                {/* Main Title */}
-                <h2 className="relative z-10 text-4xl md:text-5xl lg:text-6xl text-[#f7ede2] font-bold tracking-widest mb-28 text-center drop-shadow-xl uppercase px-4">
-                    MODERNIZING LUXURY TRAVEL
-                </h2>
-
-                {/* Search Widget Overlapping Bottom */}
-                <div className="absolute -bottom-10 w-full max-w-5xl px-4 z-20">
-                    <div className="bg-white rounded flex flex-col md:flex-row search-widget divide-y md:divide-y-0 md:divide-[#3E362E]/10 border border-[#3E362E]/10">
-                        {/* Where To */}
-                        <div className="p-5 flex-1 cursor-text hover:bg-[#AC8968]/20 transition-colors">
-                            <div className="text-[10px] text-gray-400 font-bold tracking-wider mb-1">WHERE TO</div>
-                            <input type="text" placeholder="Search Cities or Hotels"
-                                className="w-full font-semibold text-gray-800 text-sm bg-transparent placeholder-[#3E362E]/50 focus:outline-none" />
-                        </div>
-
-                        {/* When */}
-                        <div className="p-5 flex-1 cursor-pointer hover:bg-[#AC8968]/20 transition-colors">
-                            <div className="text-[10px] text-gray-400 font-bold tracking-wider mb-1">WHEN</div>
-                            <div className="w-full font-semibold text-gray-800 text-sm">Check In - Check Out</div>
-                        </div>
-
-                        {/* Guests */}
-                        <div className="p-5 flex-1 cursor-pointer hover:bg-[#AC8968]/20 transition-colors">
-                            <div className="text-[10px] text-gray-400 font-bold tracking-wider mb-1">GUESTS</div>
-                            <div className="font-semibold text-gray-800 text-sm">2 People</div>
-                        </div>
-
-                        {/* Rooms */}
-                        <div className="p-5 flex-1 cursor-pointer hover:bg-[#AC8968]/20 transition-colors">
-                            <div className="text-[10px] text-gray-400 font-bold tracking-wider mb-1">ROOMS</div>
-                            <div className="font-semibold text-gray-800 text-sm">1 Room</div>
-                        </div>
-
-                        {/* Search Button */}
-                        <div className="p-3 flex items-center md:w-56 bg-white">
-                            <Link to="/redirect"
-                                className="btn-olive w-full h-full rounded-sm text-sm font-bold tracking-wider flex items-center justify-center gap-3 py-4">
-                                SEARCH
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                </svg>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    );
+      </div>
+
+      {/* Features Section */}
+      <div className="mb-12">
+        <h2 className="text-3xl font-bold text-center mb-8">Why Choose Us</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((feature, index) => (
+            <div key={index} className="card bg-base-100 shadow-lg">
+              <div className="card-body items-center text-center">
+                <feature.icon className={`text-5xl ${feature.color} mb-4`} />
+                <h3 className="card-title text-xl">{feature.title}</h3>
+                <p className="text-base-content/70">{feature.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* How It Works */}
+      <div className="mb-12">
+        <h2 className="text-3xl font-bold text-center mb-8">How It Works</h2>
+        <div className="steps steps-vertical lg:steps-horizontal">
+          <div className="step step-primary">
+            <div className="text-center">
+              <p className="font-bold">1. Register/Login</p>
+              <p className="text-sm text-base-content/70">Create your account</p>
+            </div>
+          </div>
+          <div className="step step-primary">
+            <div className="text-center">
+              <p className="font-bold">2. Browse Rooms</p>
+              <p className="text-sm text-base-content/70">Select your dates</p>
+            </div>
+          </div>
+          <div className="step step-primary">
+            <div className="text-center">
+              <p className="font-bold">3. Book Room</p>
+              <p className="text-sm text-base-content/70">Submit booking request</p>
+            </div>
+          </div>
+          <div className="step step-primary">
+            <div className="text-center">
+              <p className="font-bold">4. Admin Approval</p>
+              <p className="text-sm text-base-content/70">Wait for confirmation</p>
+            </div>
+          </div>
+          <div className="step step-primary">
+            <div className="text-center">
+              <p className="font-bold">5. Make Payment</p>
+              <p className="text-sm text-base-content/70">Complete your booking</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="stats stats-vertical lg:stats-horizontal shadow-lg w-full bg-base-100">
+        <div className="stat">
+          <div className="stat-figure text-primary">
+            <FiGrid className="w-8 h-8" />
+          </div>
+          <div className="stat-title">Available Rooms</div>
+          <div className="stat-value text-primary">13+</div>
+          <div className="stat-desc">Standard, Deluxe & Suite</div>
+        </div>
+        
+        <div className="stat">
+          <div className="stat-figure text-secondary">
+            <FiCalendar className="w-8 h-8" />
+          </div>
+          <div className="stat-title">Booking Status</div>
+          <div className="stat-value text-secondary">5 Stages</div>
+          <div className="stat-desc">Full lifecycle tracking</div>
+        </div>
+        
+        <div className="stat">
+          <div className="stat-figure text-accent">
+            <FiCreditCard className="w-8 h-8" />
+          </div>
+          <div className="stat-title">Payment Methods</div>
+          <div className="stat-value text-accent">3</div>
+          <div className="stat-desc">CARD, CASH, UPI</div>
+        </div>
+      </div>
+    </Layout>
+  );
 };
 
 export default Home;

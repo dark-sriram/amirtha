@@ -1,58 +1,74 @@
-import { useState } from 'react'
-<<<<<<< HEAD
-import './App.css'
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
-function App() {
-
-  return (
-    <div className="App">
-      <UserDashboard />
-    </div>
-  )
-}
-
-export default App
-=======
-import Feedback from './pages/Feedback'
-import Navbar from './components/Navbar'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// Customer Pages
 import Home from './pages/Home';
-import Booking from './pages/Booking';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Rooms from './pages/Rooms';
+import RoomDetails from './pages/RoomDetails';
+import MyBookings from './pages/MyBookings';
 import Payment from './pages/Payment';
-import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/AdminDashboard';
-import UserDashboard from './pages/UserDashboard';
+import Profile from './pages/Profile';
+
+// Admin Pages
+import AdminDashboard from './pages/adminDashboard';
+import AdminBookings from './pages/BookingRequests';
+import AdminRooms from './pages/RoomManagement';
+import AdminAllBookings from './pages/AllBookings';
 
 function App() {
-  const userRole = localStorage.getItem('userRole'); // 'admin' or 'user'
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
   return (
-    <>
-    <Navbar/>
-    {/* <Feedback/> */}
-    </>
-    <Router>
-      <Routes>
-        {/* Landing and general public pages */}
-        <Route path="/" element={<Home />} />
-        <Route path="/booking" element={<Booking />} />
-        <Route path="/payment" element={<Payment />} />
-        <Route path="/redirect" element={<div className="p-10 text-center font-bold text-xl">Redirect target reached!</div>} />
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/rooms" element={<Rooms />} />
+      <Route path="/rooms/:id" element={<RoomDetails />} />
 
-        {/* Authentication and dashboards */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/admin/*"
-          element={userRole === 'admin' ? <AdminDashboard /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/user/*"
-          element={userRole === 'user' ? <UserDashboard /> : <Navigate to="/login" />}
-        />
-      </Routes>
-    </Router>
+      {/* Protected Customer Routes */}
+      <Route path="/my-bookings" element={
+        <ProtectedRoute><MyBookings /></ProtectedRoute>
+      } />
+      <Route path="/payment/:id" element={
+        <ProtectedRoute><Payment /></ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute><Profile /></ProtectedRoute>
+      } />
+
+      {/* Admin Routes */}
+      <Route path="/admin/dashboard" element={
+        <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>
+      } />
+      <Route path="/admin/bookings" element={
+        <ProtectedRoute adminOnly><AdminBookings /></ProtectedRoute>
+      } />
+      <Route path="/admin/rooms" element={
+        <ProtectedRoute adminOnly><AdminRooms /></ProtectedRoute>
+      } />
+      <Route path="/admin/all-bookings" element={
+        <ProtectedRoute adminOnly><AdminAllBookings /></ProtectedRoute>
+      } />
+
+      {/* 404 */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
 export default App;
->>>>>>> b722868a72f982f1853512ac4db398f5d395ba7f
+
